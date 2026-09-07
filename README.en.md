@@ -379,7 +379,7 @@ git cherry-pick <commit_sha>
 - `siteUrl`: production site URL (base URL for canonical/sitemap/RSS)
 - `siteTitle`: site title
 - `siteDescription`: default description
-- `locale`: locale in BCP-47 format (for example `zh-CN`)
+- `locale`: locale in BCP-47 format (for example `zh-TW`)
 - `headerGithubRepoUrl`: repository URL shown in header
 - `faviconIco`: global favicon path (served from `public/`)
 

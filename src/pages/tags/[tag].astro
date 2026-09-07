@@ -31,8 +31,8 @@ const tagsHero = heroConfig.tags;
 ---
 
 <PageShell
-  title={`标签: ${tag} | ${siteTitle}`}
-  description={`所有标记为 "${tag}" 的博客文章`}
+  title={`標籤: ${tag} | ${siteTitle}`}
+  description={`所有標記為 "${tag}" 的文章`}
   transparentHeader={true}
   pageId="tag-detail"
   useMainWrapper={false}
@@ -514,7 +514,7 @@ const tagsHero = heroConfig.tags;
     </style>
 
   <HeroHeader
-    text={`标签：${tag}`}
+    text={`標籤：${tag}`}
     subtitle={tagsHero.subtitle}
     backgroundImage={tagsHero.backgroundImage}
     compact={true}
@@ -523,19 +523,19 @@ const tagsHero = heroConfig.tags;
   <ArchiveCard
     number="Tag"
     title={`#${tag}`}
-    intro={`包含此标签的文章共 ${posts.length} 篇`}
+    intro={`包含此標籤的文章共 ${posts.length} 篇`}
     minHeight={true}
   >
     <div class="tags-workspace">
       <div class="back-btn-container">
-        <a href="/tags/" class="back-link">← 查看全部标签归档</a>
+        <a href="/tags/" class="back-link">← 查看全部標籤歸檔</a>
       </div>
 
       {/* Control Panel */}
       <div class="tags-control-panel">
         <div class="search-box-wrapper">
           <div class="search-box">
-            <input type="text" id="tag-search" placeholder={`在 #${tag} 分类内搜索文章...`} autocomplete="off" />
+            <input type="text" id="tag-search" placeholder={`在 #${tag} 分類內搜索文章...`} autocomplete="off" />
             <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -551,8 +551,8 @@ const tagsHero = heroConfig.tags;
         </div>
 
         <div class="chips-header">
-          <span class="chips-title">相关主题标签</span>
-          <span class="tags-count-badge">共 {sortedTags.length} 个标签</span>
+          <span class="chips-title">相關主題標籤</span>
+          <span class="tags-count-badge">共 {sortedTags.length} 個標籤</span>
         </div>
 
         <div class="tags-cloud">
@@ -620,7 +620,7 @@ const tagsHero = heroConfig.tags;
                         <line x1="8" y1="2" x2="8" y2="6"></line>
                         <line x1="3" y1="10" x2="21" y2="10"></line>
                       </svg>
-                      {post.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+                      {post.data.pubDate.toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' })}
                     </span>
                     
                     {post.data.categories && post.data.categories.length > 0 && (
@@ -659,7 +659,7 @@ const tagsHero = heroConfig.tags;
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="8" y1="12" x2="16" y2="12"></line>
           </svg>
-          <p id="empty-state-message">没有找到与搜索或选择匹配的文章</p>
+          <p id="empty-state-message">沒有找到匹配的文章</p>
         </div>
       </section>
     </div>

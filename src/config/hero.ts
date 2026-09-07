@@ -34,8 +34,8 @@ export interface HeroConfig {
 
 export const heroConfig: HeroConfig = {
   home: {
-    text: 'Build your ideas, one post at a time.',
-    subtitle: 'A clean Astro theme with centralized configuration.',
+    text: '成為門徒，使人作門徒',
+    subtitle: '耶穌命令每個門徒要去使人作門徒，跟隨耶穌的人（門徒）沒有選擇的餘地',
     backgroundImage: defaultBackground.src,
   },
   blog: {

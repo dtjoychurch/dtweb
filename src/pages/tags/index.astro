@@ -14,8 +14,8 @@ const tagsHero = heroConfig.tags;
 ---
 
 <PageShell
-  title={`标签 | ${siteTitle}`}
-  description="按标签及关键词浏览所有博客文章"
+  title={`分類 | ${siteTitle}`}
+  description="按標籤及關鍵詞瀏覽所有文章"
   transparentHeader={true}
   pageId="tags-index"
   useMainWrapper={false}
@@ -478,8 +478,8 @@ const tagsHero = heroConfig.tags;
 
   <ArchiveCard
     number="Tags"
-    title="标签与内容分类"
-    intro="选择你感兴趣的主题，或在上方检索关键字，实时筛选归档文章。"
+    title="標籤與內容分類"
+    intro="選擇你感興趣的主題，作為文章分類。"
     minHeight={true}
   >
     {sortedTags.length > 0 ? (
@@ -488,7 +488,7 @@ const tagsHero = heroConfig.tags;
         <div class="tags-control-panel">
           <div class="search-box-wrapper">
             <div class="search-box">
-              <input type="text" id="tag-search" placeholder="搜索主题标签或文章内容..." autocomplete="off" />
+              <input type="text" id="tag-search" placeholder="搜索主题標籤或文章内容..." autocomplete="off" />
               <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -504,8 +504,8 @@ const tagsHero = heroConfig.tags;
           </div>
 
           <div class="chips-header">
-            <span class="chips-title">主题切牌筛选</span>
-            <span class="tags-count-badge">共 {sortedTags.length} 个标签</span>
+            <span class="chips-title">主题切牌篩選</span>
+            <span class="tags-count-badge">共 {sortedTags.length} 個標籤</span>
           </div>
 
           <div class="tags-cloud">
@@ -574,7 +574,7 @@ const tagsHero = heroConfig.tags;
                           <line x1="8" y1="2" x2="8" y2="6"></line>
                           <line x1="3" y1="10" x2="21" y2="10"></line>
                         </svg>
-                        {post.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+                        {post.data.pubDate.toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' })}
                       </span>
                       
                       {post.data.categories && post.data.categories.length > 0 && (
@@ -598,7 +598,7 @@ const tagsHero = heroConfig.tags;
             })}
           </div>
 
-          <nav id="tag-pagination" class="pagination" aria-label="文章分页" hidden>
+          <nav id="tag-pagination" class="pagination" aria-label="文章分頁" hidden>
             <button id="tag-prev-page" type="button" class="page-btn prev-btn" aria-label="上一页">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
             </button>
@@ -613,12 +613,12 @@ const tagsHero = heroConfig.tags;
               <circle cx="12" cy="12" r="10"></circle>
               <line x1="8" y1="12" x2="16" y2="12"></line>
             </svg>
-            <p id="empty-state-message">没有找到与搜索或选择匹配的文章</p>
+            <p id="empty-state-message">沒有找到與搜索匹配的文章</p>
           </div>
         </section>
       </div>
     ) : (
-      <p style="text-align: center; color: var(--color-text-secondary); padding: 3rem;">暂无标签</p>
+      <p style="text-align: center; color: var(--color-text-secondary); padding: 3rem;">暫無標籤</p>
     )}
   </ArchiveCard>
 

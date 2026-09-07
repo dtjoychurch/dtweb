@@ -258,7 +258,7 @@ function normalizeDocument(parsed, relativePath) {
 	};
 }
 
-const files = (await walk(contentRoot)).sort((a, b) => a.localeCompare(b, 'zh-CN'));
+const files = (await walk(contentRoot)).sort((a, b) => a.localeCompare(b, 'zh-TW'));
 report.totalFiles = files.length;
 
 for (const filePath of files) {

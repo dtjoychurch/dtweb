@@ -4,7 +4,7 @@ import defaultAvatar from '../assets/profile.jpg';
 /**
  * Allowed social entry keys in profile configuration.
  */
-export type ProfileSocialKey = 'github' | 'x' | 'email' | 'website';
+export type ProfileSocialKey = 'facebook' | 'ig' | 'email' | 'website';
 
 /**
  * One social link item rendered on `/about`.
@@ -55,15 +55,15 @@ export interface ProfileConfig {
 
 export const profileConfig: ProfileConfig = {
   avatar: defaultAvatar,
-  name: 'Your Name',
-  title: 'Your Role / Focus',
-  bio: 'Write a short self-introduction here. This content is used in About and article schema.',
-  location: 'Your City',
-  email: 'you@example.com',
+  name: '喜樂教會',
+  title: '凡勞苦擔重擔的人，可以到我這裡來，我就使你們得安息。(馬太福音11:28)',
+  bio: '本網站由喜樂教會建立與維護。',
+  location: '桃園市',
+  email: 'joychurch2000@gmail.com',
   githubProfileUrl: 'https://example.com',
   socials: [
-    { key: 'github', label: 'GitHub', url: 'https://example.com' },
-    { key: 'x', label: 'X', url: 'https://example.com' },
+    { key: 'facebook', label: 'Facebook', url: 'https://www.facebook.com/joychurch2000/?locale=zh_TW' },
+    { key: 'ig', label: 'Instagram', url: 'https://www.instagram.com/taoyuanjoy2020' },
     { key: 'website', label: 'Website', url: 'https://example.com' },
   ],
 };
