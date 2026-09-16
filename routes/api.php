@@ -62,7 +62,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/journey', [JourneyController::class, 'index']);
 
     // 後台
-    Route::prefix('admin')->middleware('admin')->group(function () {
+    // 注意：一定要加 name('api.admin.') 前綴——這幾個 apiResource 產生的路由名稱
+    // 預設是 users.index / notes.index 這種裸名字，會跟 routes/web.php 前台的
+    // Route::resource('notes', ...) 等同名路由衝突，導致 `route:cache` 在正式環境
+    // build 時直接噴 LogicException（本地 `php artisan serve` 不會觸發，因為
+    // route:cache 才會真的去檢查名稱唯一性，這就是為什麼本地測試都正常）。
+    Route::prefix('admin')->middleware('admin')->name('api.admin.')->group(function () {
         Route::apiResource('users', AdminUserController::class);
         Route::apiResource('relationships', AdminRelationshipController::class);
         Route::apiResource('sessions', AdminSessionController::class)->only(['index', 'update', 'destroy']);
