@@ -21,7 +21,9 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['mentor_id', 'disciple_id', 'started_at']);
+            // 明確給短一點的索引名稱——Laravel 自動產生的名字在 MySQL 上會超過
+            // 64 字元上限（identifier 太長），SQLite 不會檢查所以本機測試沒抓到。
+            $table->unique(['mentor_id', 'disciple_id', 'started_at'], 'discipleship_relationships_unique');
         });
     }
 
