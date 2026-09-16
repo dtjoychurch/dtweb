@@ -64,13 +64,37 @@
     padding-bottom: 0.5rem !important;
   }
 
-  .navbar .navbar-brand img {
+  /* logo.png/2.png/3.png 畫布內書法字只佔中間一小塊，四周有大片透明留白，
+     這裡用 overflow:hidden 的容器把留白裁掉，只放大顯示書法字本身。 */
+  .logo-crop {
+    display: inline-block;
+    overflow: hidden;
+    position: relative;
+    width: 227px;
     height: 60px;
-    transition: height 0.4s ease-in-out;
+    vertical-align: middle;
+    transition: width 0.4s ease-in-out, height 0.4s ease-in-out;
   }
 
-  #mainNav.navbar-shrink .navbar-brand img {
+  .logo-crop img {
+    display: block;
+    position: absolute;
+    width: auto;
+    height: 90px;
+    top: -17px;
+    left: -14px;
+    transition: height 0.4s ease-in-out, top 0.4s ease-in-out, left 0.4s ease-in-out;
+  }
+
+  #mainNav.navbar-shrink .logo-crop {
+    width: 170px;
     height: 45px;
+  }
+
+  #mainNav.navbar-shrink .logo-crop img {
+    height: 67px;
+    top: -13px;
+    left: -11px;
   }
 
   #mainNav {
@@ -194,3 +218,99 @@
   object-position: center;
 }
 /* ========= 圖片遮罩 ========= */
+
+/* ========= 見證分享：像新聞一樣左右滑動的卡片列 ========= */
+.testimony-scroll {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.25rem 1rem 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: #d8cfc6 transparent;
+}
+
+.testimony-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.testimony-scroll::-webkit-scrollbar-thumb {
+  background-color: #d8cfc6;
+  border-radius: 999px;
+}
+
+/* 手機：一頁一張（留一點下一張的邊緣提示可滑動） */
+.testimony-card {
+  flex: 0 0 calc(100% - 2.5rem);
+  scroll-snap-align: start;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* 平板：一頁兩張 */
+@media (min-width: 768px) {
+  .testimony-card {
+    flex-basis: calc((100% - 1.25rem) / 2);
+  }
+}
+
+/* 桌機：一頁三張 */
+@media (min-width: 992px) {
+  .testimony-card {
+    flex-basis: calc((100% - 2.5rem) / 3);
+  }
+}
+
+.testimony-card-image {
+  width: 100%;
+  height: 240px;
+  background-color: #eee;
+}
+
+.testimony-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.testimony-card-body {
+  padding: 1.5rem;
+}
+
+.testimony-card-body h5 {
+  font-size: 1.15rem;
+}
+
+.testimony-card-body p {
+  font-size: 1rem;
+}
+
+.testimony-scroll-btn {
+  width: 2.25rem;
+  height: 2.25rem;
+  line-height: 1;
+  font-size: 1.1rem;
+}
+/* ========= 見證分享 ========= */
+
+/* ========= 手風琴：套用品牌色，取代 Bootstrap 預設藍色 ========= */
+.discipleship-accordion {
+  --bs-accordion-active-color: #6b5340;
+  --bs-accordion-active-bg: #f1ece7;
+  --bs-accordion-border-color: #e5ded7;
+  --bs-accordion-btn-focus-box-shadow: 0 0 0 0.2rem rgba(140, 109, 90, 0.25);
+}
+
+.discipleship-accordion .accordion-button:not(.collapsed) {
+  box-shadow: inset 0 -1px 0 var(--bs-accordion-border-color);
+}
+
+.discipleship-accordion .accordion-button::after {
+  filter: sepia(30%) saturate(400%) hue-rotate(340deg) brightness(0.9);
+}
+/* ========= 手風琴 ========= */

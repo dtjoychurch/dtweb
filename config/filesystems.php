@@ -47,6 +47,18 @@ return [
             'report' => false,
         ],
 
+        // 直接寫進 public/uploads，不透過 storage:link 的 symlink——
+        // 在 Windows + Docker bind mount 環境下 symlink 常常不可靠，
+        // 直接落地在 public 底下的真實資料夾最省事，Railway 上一樣能用。
+        'uploads' => [
+            'driver' => 'local',
+            'root' => public_path('uploads'),
+            'url' => env('APP_URL').'/uploads',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

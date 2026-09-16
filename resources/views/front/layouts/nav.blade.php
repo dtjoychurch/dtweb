@@ -1,18 +1,34 @@
 <nav class="navbar bg-white shadow navbar-shrink" id="mainNav">
   <div class="container pt-4 ps-4" style="max-width: 90%;">
     <!-- LOGO -->
-    <a class="navbar-brand" href="{{ url('/InTheGreen/home') }}">
-      <img id="nav-logo" src="{{ asset('img/3.png') }}" alt="在田裡 Logo" height="60">
+    <a class="navbar-brand" href="{{ route('home') }}">
+      <span class="logo-crop">
+        <img id="nav-logo" src="{{ asset('img/3.png') }}" alt="門訓歷程 Logo">
+      </span>
     </a>
 
-    <div class="d-none d-lg-flex">
-      <a href="#" class="navlink mx-3 text-decoration-none fw-semibold glow-button">品牌故事</a>
-      <a href="{{ url('/InTheGreen/Member/login') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">會員中心</a>
-      <a href="{{ url('/InTheGreen/FarmIntroduce') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">走進農場</a>
-      <a href="{{ url('/InTheGreen/Rental') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">租一塊田</a>
-      <a href="#" class="navlink mx-3 text-decoration-none fw-semibold glow-button">活動報名</a>
-      <a href="{{ url('/InTheGreen/Library') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">種植筆記本</a>
-      <a href="#" class="navlink mx-3 text-decoration-none fw-semibold glow-button">預約私廚</a>
+    <div class="d-none d-lg-flex align-items-center">
+      <a href="{{ route('home') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">首頁</a>
+      @auth
+        <a href="{{ route('discipleship.index') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">門訓</a>
+        <a href="{{ route('journey.index') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">生命歷程</a>
+        <a href="{{ route('notes.index') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">我的筆記</a>
+      @endauth
+      <a href="{{ route('pages.resources') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">資源</a>
+      <a href="{{ route('pages.about') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">關於</a>
+
+      @auth
+        @if (auth()->user()->isAdmin())
+          <a href="{{ route('admin.dashboard') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">後台</a>
+        @endif
+        <form method="POST" action="{{ route('logout') }}" class="d-inline">
+          @csrf
+          <button type="submit" class="navlink mx-3 border-0 bg-transparent text-decoration-none fw-semibold glow-button">登出（{{ auth()->user()->name }}）</button>
+        </form>
+      @else
+        <a href="{{ route('login') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">登入</a>
+        <a href="{{ route('register') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">註冊</a>
+      @endauth
     </div>
 
     <!-- 漢堡按鈕 -->
@@ -32,42 +48,46 @@
       <div class="offcanvas-body ms-2">
         <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">首頁</a>
+            <a class="nav-link" href="{{ route('home') }}">首頁</a>
+          </li>
+          @auth
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('discipleship.index') }}">門訓</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('journey.index') }}">生命歷程</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('notes.index') }}">我的筆記</a>
+            </li>
+          @endauth
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('pages.resources') }}">資源</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link glow-button" href="#">品牌故事</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url('/InTheGreen/Member/login') }}">會員中心</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url('/InTheGreen/FarmIntroduce') }}">走進農場</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url('/InTheGreen/Rental') }}">租一塊田</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">活動報名</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url('/InTheGreen/Library') }}">種植筆記本</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">預約私廚</a>
+            <a class="nav-link" href="{{ route('pages.about') }}">關於</a>
           </li>
 
-          <!-- 下拉選單 -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="offcanvasNavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              更多
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="offcanvasNavbarDropdown">
-              <li><a class="dropdown-item" href="#">共耕公約</a></li>
-              <li><a class="dropdown-item" href="#">回憶相簿</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">聯絡我們</a></li>
-            </ul>
-          </li>
+          @auth
+            @if (auth()->user()->isAdmin())
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.dashboard') }}">後台</a>
+              </li>
+            @endif
+            <li class="nav-item">
+              <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="nav-link border-0 bg-transparent text-start w-100">登出（{{ auth()->user()->name }}）</button>
+              </form>
+            </li>
+          @else
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('login') }}">登入</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('register') }}">註冊</a>
+            </li>
+          @endauth
         </ul>
       </div>
     </div>

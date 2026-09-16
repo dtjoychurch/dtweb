@@ -4,13 +4,15 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +23,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar',
+        'role',
+        'status',
     ];
 
     /**
@@ -44,5 +49,80 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Relationships in which this user is the mentor.
+     *
+     * @return HasMany<DiscipleshipRelationship, $this>
+     */
+    public function mentoredRelationships(): HasMany
+    {
+        return $this->hasMany(DiscipleshipRelationship::class, 'mentor_id');
+    }
+
+    /**
+     * Relationships in which this user is the disciple.
+     *
+     * @return HasMany<DiscipleshipRelationship, $this>
+     */
+    public function discipleRelationships(): HasMany
+    {
+        return $this->hasMany(DiscipleshipRelationship::class, 'disciple_id');
+    }
+
+    /**
+     * All discipleship relationships this user is a member of (mentor or disciple).
+     *
+     * @return \Illuminate\Support\Collection<int, DiscipleshipRelationship>
+     */
+    public function discipleshipRelationships(): \Illuminate\Support\Collection
+    {
+        return $this->mentoredRelationships->merge($this->discipleRelationships);
+    }
+
+    /**
+     * @return HasMany<DiscipleshipSession, $this>
+     */
+    public function createdSessions(): HasMany
+    {
+        return $this->hasMany(DiscipleshipSession::class, 'created_by');
+    }
+
+    /**
+     * @return HasMany<DiscipleshipComment, $this>
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(DiscipleshipComment::class);
+    }
+
+    /**
+     * @return HasMany<DiscipleshipNote, $this>
+     */
+    public function notes(): HasMany
+    {
+        return $this->hasMany(DiscipleshipNote::class);
+    }
+
+    /**
+     * @return HasMany<DiscipleshipRecord, $this>
+     */
+    public function records(): HasMany
+    {
+        return $this->hasMany(DiscipleshipRecord::class, 'created_by');
+    }
+
+    /**
+     * @return HasMany<DiscipleshipGoal, $this>
+     */
+    public function goals(): HasMany
+    {
+        return $this->hasMany(DiscipleshipGoal::class, 'created_by');
     }
 }
