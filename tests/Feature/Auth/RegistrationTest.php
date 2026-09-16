@@ -27,6 +27,36 @@ class RegistrationTest extends TestCase
         $this->assertTrue(Hash::check('password123', $user->password));
     }
 
+    public function test_first_ever_user_becomes_admin_automatically(): void
+    {
+        $this->assertSame(0, User::count());
+
+        $this->post('/register', [
+            'name' => '第一個帳號',
+            'email' => 'first@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ]);
+
+        $first = User::where('email', 'first@example.com')->firstOrFail();
+        $this->assertSame('admin', $first->role);
+    }
+
+    public function test_subsequent_users_are_normal_members(): void
+    {
+        User::factory()->create();
+
+        $this->post('/register', [
+            'name' => '第二個帳號',
+            'email' => 'second@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ]);
+
+        $second = User::where('email', 'second@example.com')->firstOrFail();
+        $this->assertSame('member', $second->role);
+    }
+
     public function test_cannot_register_two_accounts_with_the_same_email(): void
     {
         User::factory()->create(['email' => 'taken@example.com']);

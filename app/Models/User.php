@@ -57,6 +57,17 @@ class User extends Authenticatable
     }
 
     /**
+     * The role a newly self-registering user should get. Solves the
+     * bootstrap problem (an empty prod DB has no admin to promote anyone
+     * else) without needing manual DB access: the very first account ever
+     * created becomes admin, everyone after that is a normal member.
+     */
+    public static function nextRegistrationRole(): string
+    {
+        return static::query()->doesntExist() ? 'admin' : 'member';
+    }
+
+    /**
      * Relationships in which this user is the mentor.
      *
      * @return HasMany<DiscipleshipRelationship, $this>
