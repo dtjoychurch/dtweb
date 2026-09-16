@@ -26,6 +26,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // 安全可以重複執行：如果示範資料已經灌過一次（用這個固定信箱當標記），
+        // 就直接跳過，不會重複建立或撞到 unique email 而噴錯。這樣即使
+        // Pre-Deploy Command 裡長期留著 db:seed，也不會每次部署都出問題。
+        if (User::where('email', 'admin@example.com')->exists()) {
+            $this->command?->info('示範資料已經存在，跳過 seeding。');
+
+            return;
+        }
+
         $admin = User::factory()->create([
             'name' => '管理員',
             'email' => 'admin@example.com',
