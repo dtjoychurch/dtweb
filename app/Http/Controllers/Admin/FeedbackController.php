@@ -11,7 +11,7 @@ class FeedbackController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource(Feedback::class, 'feedback', ['except' => ['create', 'store', 'edit', 'update', 'show']]);
+        $this->authorizeResource(Feedback::class, 'feedback', ['except' => ['create', 'store', 'edit', 'update']]);
     }
 
     public function index(Request $request)
@@ -26,6 +26,13 @@ class FeedbackController extends Controller
             ->withQueryString();
 
         return view('admin.feedbacks.index', compact('feedbacks'));
+    }
+
+    public function show(Feedback $feedback)
+    {
+        $feedback->load('user');
+
+        return view('admin.feedbacks.show', compact('feedback'));
     }
 
     public function destroy(Feedback $feedback): RedirectResponse

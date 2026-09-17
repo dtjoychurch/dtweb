@@ -21,7 +21,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::resource('relationships', RelationshipController::class)->except(['show']);
     Route::resource('sessions', SessionController::class)->only(['index', 'edit', 'update', 'destroy']);
     Route::resource('comments', CommentController::class)->only(['index', 'destroy']);
-    Route::resource('feedbacks', FeedbackController::class)->only(['index', 'destroy']);
+    Route::resource('feedbacks', FeedbackController::class)->only(['index', 'show', 'destroy']);
     Route::resource('notes', NoteController::class)->only(['index', 'destroy']);
     Route::resource('records', RecordController::class)->only(['index', 'edit', 'update', 'destroy']);
     Route::resource('record-types', RecordTypeController::class)->except(['show']);

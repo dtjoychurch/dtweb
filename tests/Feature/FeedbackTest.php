@@ -13,7 +13,7 @@ class FeedbackTest extends TestCase
 
     public function test_guest_cannot_submit_feedback(): void
     {
-        $this->post(route('feedback.store'), ['content' => '測試意見'])
+        $this->post(route('feedback.store'), ['title' => '測試標題', 'content' => '測試意見'])
             ->assertRedirect('/login');
     }
 
@@ -22,14 +22,27 @@ class FeedbackTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->post(route('feedback.store'), [
+            'title' => '深色模式建議',
             'content' => '希望可以增加深色模式',
         ]);
 
         $response->assertRedirect(route('feedback.index'));
         $this->assertDatabaseHas('feedbacks', [
             'user_id' => $user->id,
+            'title' => '深色模式建議',
             'content' => '希望可以增加深色模式',
         ]);
+    }
+
+    public function test_feedback_requires_a_title(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post(route('feedback.store'), [
+            'content' => '沒有標題的意見',
+        ]);
+
+        $response->assertSessionHasErrors('title');
     }
 
     public function test_user_only_sees_their_own_feedback_history(): void

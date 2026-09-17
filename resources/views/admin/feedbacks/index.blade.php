@@ -16,7 +16,7 @@
       <tr>
         <th>時間</th>
         <th>使用者</th>
-        <th>內容</th>
+        <th>標題</th>
         <th></th>
       </tr>
     </thead>
@@ -25,9 +25,10 @@
         <tr>
           <td>{{ $feedback->created_at->format('Y/m/d H:i') }}</td>
           <td>{{ $feedback->user->name }}</td>
-          <td>{{ \Illuminate\Support\Str::limit($feedback->content, 60) }}</td>
+          <td><a href="{{ route('admin.feedbacks.show', $feedback) }}">{{ $feedback->title }}</a></td>
           <td class="text-end">
-            <form method="POST" action="{{ route('admin.feedbacks.destroy', $feedback) }}" onsubmit="return confirm('確定要刪除這則意見嗎？');">
+            <a href="{{ route('admin.feedbacks.show', $feedback) }}" class="btn btn-sm btn-outline-dark">檢視</a>
+            <form method="POST" action="{{ route('admin.feedbacks.destroy', $feedback) }}" class="d-inline" onsubmit="return confirm('確定要刪除這則意見嗎？');">
               @csrf
               @method('DELETE')
               <button type="submit" class="btn btn-sm btn-outline-danger">刪除</button>

@@ -27,6 +27,11 @@
     @csrf
 
     <div class="mb-3">
+      <label class="form-label">標題</label>
+      <input type="text" name="title" class="form-control" value="{{ old('title') }}" required>
+    </div>
+
+    <div class="mb-3">
       <label class="form-label">你的意見</label>
       <textarea name="content" class="form-control" rows="6" required>{{ old('content') }}</textarea>
     </div>
@@ -43,6 +48,7 @@
       @foreach ($feedbacks as $feedback)
         <div class="list-group-item">
           <div class="text-muted small mb-1">{{ $feedback->created_at->format('Y/m/d H:i') }}</div>
+          <h6 class="mb-1">{{ $feedback->title }}</h6>
           <p class="mb-0">{{ $feedback->content }}</p>
         </div>
       @endforeach

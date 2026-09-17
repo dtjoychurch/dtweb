@@ -14,6 +14,7 @@ class FeedbackFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
+            'title' => fake()->sentence(4),
             'content' => fake()->paragraph(),
         ];
     }

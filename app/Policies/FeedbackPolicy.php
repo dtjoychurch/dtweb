@@ -12,6 +12,11 @@ class FeedbackPolicy
         return $user->isAdmin();
     }
 
+    public function view(User $user, Feedback $feedback): bool
+    {
+        return $user->isAdmin();
+    }
+
     public function create(User $user): bool
     {
         return true;
