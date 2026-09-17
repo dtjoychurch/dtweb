@@ -7,10 +7,6 @@
 <h2 class="fw-bold text-muted mb-4">編輯生命歷程紀錄</h2>
 <p class="text-muted">{{ $record->relationship->mentor->name }} × {{ $record->relationship->disciple->name }}</p>
 
-@php
-  $typeLabels = ['growth'=>'成長','struggle'=>'掙扎','reflection'=>'反思','prayer'=>'禱告','milestone'=>'里程碑','observation'=>'觀察','decision'=>'決定','testimony'=>'見證'];
-@endphp
-
 <form method="POST" action="{{ route('admin.records.update', $record) }}" style="max-width: 600px;">
   @csrf
   @method('PUT')
@@ -18,9 +14,9 @@
   <div class="row">
     <div class="col-md-4 mb-3">
       <label class="form-label">類型</label>
-      <select name="type" class="form-select">
-        @foreach ($typeLabels as $value => $label)
-          <option value="{{ $value }}" {{ old('type', $record->type) === $value ? 'selected' : '' }}>{{ $label }}</option>
+      <select name="type_id" class="form-select">
+        @foreach ($types as $type)
+          <option value="{{ $type->id }}" {{ (string) old('type_id', $record->type_id) === (string) $type->id ? 'selected' : '' }}>{{ $type->name }}{{ $type->is_active ? '' : '（已停用）' }}</option>
         @endforeach
       </select>
     </div>

@@ -17,7 +17,7 @@ class JourneyController extends Controller
         $relationshipIds = $user->discipleRelationships()->pluck('id');
 
         $records = DiscipleshipRecord::whereIn('relationship_id', $relationshipIds)
-            ->with(['relationship.mentor', 'relationship.disciple', 'creator'])
+            ->with(['relationship.mentor', 'relationship.disciple', 'creator', 'type'])
             ->where(function ($query) use ($user) {
                 $query->where('visibility', 'shared')
                     ->orWhere('created_by', $user->id);

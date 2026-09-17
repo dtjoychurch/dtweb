@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\DiscipleshipGoal;
 use App\Models\DiscipleshipRecord;
+use App\Models\DiscipleshipRecordType;
 use App\Models\DiscipleshipRelationship;
 use App\Models\DiscipleshipSession;
 use App\Models\HeroSlide;
@@ -99,7 +100,7 @@ class DatabaseSeeder extends Seeder
         DiscipleshipRecord::factory()->create([
             'relationship_id' => $mainRelationship->id,
             'created_by' => $boJun->id,
-            'type' => 'growth',
+            'type_id' => DiscipleshipRecordType::where('slug', 'growth')->value('id'),
             'title' => '開始學習面對自己的情緒',
             'visibility' => 'shared',
             'occurred_at' => now()->subMonths(2),
@@ -108,7 +109,7 @@ class DatabaseSeeder extends Seeder
         DiscipleshipRecord::factory()->create([
             'relationship_id' => $mainRelationship->id,
             'created_by' => $boJun->id,
-            'type' => 'struggle',
+            'type_id' => DiscipleshipRecordType::where('slug', 'struggle')->value('id'),
             'title' => '面對工作與生活的掙扎',
             'visibility' => 'private',
             'occurred_at' => now()->subMonth(),

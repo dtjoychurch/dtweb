@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Models\DiscipleshipRecord;
 use App\Models\DiscipleshipSession;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 class StoreDiscipleshipRecordRequest extends FormRequest
@@ -21,7 +21,7 @@ class StoreDiscipleshipRecordRequest extends FormRequest
     {
         return [
             'session_id' => ['nullable', 'integer', 'exists:discipleship_sessions,id'],
-            'type' => ['required', 'in:'.implode(',', DiscipleshipRecord::TYPES)],
+            'type_id' => ['required', Rule::exists('discipleship_record_types', 'id')->where('is_active', true)],
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
             'visibility' => ['required', 'in:shared,private'],

@@ -7,6 +7,7 @@ use App\Http\Resources\DiscipleshipRecordResource;
 use App\Models\DiscipleshipRecord;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class RecordController extends Controller
 {
@@ -17,7 +18,7 @@ class RecordController extends Controller
 
     public function index(): JsonResponse
     {
-        $records = DiscipleshipRecord::with(['relationship.mentor', 'relationship.disciple', 'creator'])
+        $records = DiscipleshipRecord::with(['relationship.mentor', 'relationship.disciple', 'creator', 'type'])
             ->latest('occurred_at')
             ->paginate(15);
 
@@ -27,7 +28,7 @@ class RecordController extends Controller
     public function update(Request $request, DiscipleshipRecord $record): JsonResponse
     {
         $data = $request->validate([
-            'type' => ['required', 'in:'.implode(',', DiscipleshipRecord::TYPES)],
+            'type_id' => ['required', Rule::exists('discipleship_record_types', 'id')],
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
             'visibility' => ['required', 'in:shared,private'],

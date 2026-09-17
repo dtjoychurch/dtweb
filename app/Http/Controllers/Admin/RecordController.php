@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\DiscipleshipRecord;
+use App\Models\DiscipleshipRecordType;
 use App\Models\DiscipleshipRelationship;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class RecordController extends Controller
 {
@@ -17,8 +19,8 @@ class RecordController extends Controller
 
     public function index(Request $request)
     {
-        $records = DiscipleshipRecord::with(['relationship.mentor', 'relationship.disciple', 'creator'])
-            ->when($request->filled('type'), fn ($q) => $q->where('type', $request->string('type')))
+        $records = DiscipleshipRecord::with(['relationship.mentor', 'relationship.disciple', 'creator', 'type'])
+            ->when($request->filled('type_id'), fn ($q) => $q->where('type_id', $request->integer('type_id')))
             ->when($request->filled('relationship_id'), fn ($q) => $q->where('relationship_id', $request->integer('relationship_id')))
             ->when($request->filled('search'), function ($q) use ($request) {
                 $search = $request->string('search');
@@ -33,19 +35,22 @@ class RecordController extends Controller
             ->withQueryString();
 
         $relationships = DiscipleshipRelationship::with(['mentor', 'disciple'])->get();
+        $types = DiscipleshipRecordType::orderBy('sort_order')->get();
 
-        return view('admin.records.index', compact('records', 'relationships'));
+        return view('admin.records.index', compact('records', 'relationships', 'types'));
     }
 
     public function edit(DiscipleshipRecord $record)
     {
-        return view('admin.records.edit', compact('record'));
+        $types = DiscipleshipRecordType::orderBy('sort_order')->get();
+
+        return view('admin.records.edit', compact('record', 'types'));
     }
 
     public function update(Request $request, DiscipleshipRecord $record): RedirectResponse
     {
         $data = $request->validate([
-            'type' => ['required', 'in:'.implode(',', DiscipleshipRecord::TYPES)],
+            'type_id' => ['required', Rule::exists('discipleship_record_types', 'id')],
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
             'visibility' => ['required', 'in:shared,private'],

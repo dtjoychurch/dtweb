@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DiscipleshipGoal;
+use App\Models\DiscipleshipRecordType;
 use App\Models\DiscipleshipRelationship;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,7 +52,7 @@ class DiscipleshipController extends Controller
             });
 
         $records = $relationship->records()
-            ->with('creator')
+            ->with(['creator', 'type'])
             ->get()
             ->filter(fn ($record) => $record->isVisibleTo($user));
 
@@ -70,6 +71,8 @@ class DiscipleshipController extends Controller
             'model' => $record,
         ]))->sortByDesc(fn ($item) => $item['date'])->values();
 
-        return view('front.discipleship.show', compact('relationship', 'timeline', 'goals', 'sessions'));
+        $recordTypes = DiscipleshipRecordType::where('is_active', true)->orderBy('sort_order')->get();
+
+        return view('front.discipleship.show', compact('relationship', 'timeline', 'goals', 'sessions', 'recordTypes'));
     }
 }

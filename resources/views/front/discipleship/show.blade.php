@@ -116,13 +116,16 @@
     <button class="btn btn-outline-dark btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#newRecordForm">＋ 新增生命歷程紀錄</button>
   </div>
 
-  <div class="collapse mb-4" id="newSessionForm">
+  <div class="collapse mb-4 {{ $errors->has('session_date') || $errors->has('content') ? 'show' : '' }}" id="newSessionForm">
     <form method="POST" action="{{ route('discipleship.sessions.store', $relationship) }}" class="border rounded p-3" enctype="multipart/form-data">
       @csrf
       <div class="row">
         <div class="col-md-4 mb-2">
           <label class="form-label">日期</label>
-          <input type="date" name="session_date" class="form-control" value="{{ now()->format('Y-m-d') }}" required>
+          <input type="date" name="session_date" class="form-control @error('session_date') is-invalid @enderror" value="{{ old('session_date', now()->format('Y-m-d')) }}" required>
+          @error('session_date')
+            <div class="invalid-feedback d-block">{{ $message }}</div>
+          @enderror
         </div>
         <div class="col-md-8 mb-2">
           <label class="form-label">標題（選填）</label>
@@ -147,15 +150,10 @@
       <div class="row">
         <div class="col-md-4 mb-2">
           <label class="form-label">類型</label>
-          <select name="type" class="form-select" required>
-            <option value="growth">成長</option>
-            <option value="struggle">掙扎</option>
-            <option value="reflection">反思</option>
-            <option value="prayer">禱告</option>
-            <option value="milestone">里程碑</option>
-            <option value="observation">觀察</option>
-            <option value="decision">決定</option>
-            <option value="testimony">見證</option>
+          <select name="type_id" class="form-select" required>
+            @foreach ($recordTypes as $recordType)
+              <option value="{{ $recordType->id }}">{{ $recordType->name }}</option>
+            @endforeach
           </select>
         </div>
         <div class="col-md-4 mb-2">
@@ -202,7 +200,7 @@
           @else
             @php $record = $item['model']; @endphp
             <span class="badge bg-light text-dark border mb-1">
-              {{ ['growth'=>'成長','struggle'=>'掙扎','reflection'=>'反思','prayer'=>'禱告','milestone'=>'里程碑','observation'=>'觀察','decision'=>'決定','testimony'=>'見證'][$record->type] }}
+              {{ $record->type->name }}
             </span>
             @if ($record->visibility === 'private')
               <span class="badge bg-light text-dark border mb-1">私人</span>

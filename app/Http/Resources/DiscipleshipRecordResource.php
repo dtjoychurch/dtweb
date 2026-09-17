@@ -17,7 +17,12 @@ class DiscipleshipRecordResource extends JsonResource
             'relationship_id' => $this->relationship_id,
             'session_id' => $this->session_id,
             'creator' => new UserResource($this->whenLoaded('creator')),
-            'type' => $this->type,
+            'type_id' => $this->type_id,
+            'type' => $this->whenLoaded('type', fn () => [
+                'id' => $this->type->id,
+                'slug' => $this->type->slug,
+                'name' => $this->type->name,
+            ]),
             'title' => $this->title,
             'content' => $this->content,
             'visibility' => $this->visibility,

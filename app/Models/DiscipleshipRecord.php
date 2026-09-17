@@ -11,16 +11,11 @@ class DiscipleshipRecord extends Model
 {
     use HasFactory, SoftDeletes;
 
-    public const TYPES = [
-        'growth', 'struggle', 'reflection', 'prayer',
-        'milestone', 'observation', 'decision', 'testimony',
-    ];
-
     protected $fillable = [
         'relationship_id',
         'session_id',
         'created_by',
-        'type',
+        'type_id',
         'title',
         'content',
         'visibility',
@@ -56,6 +51,14 @@ class DiscipleshipRecord extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * @return BelongsTo<DiscipleshipRecordType, $this>
+     */
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(DiscipleshipRecordType::class, 'type_id');
     }
 
     public function isVisibleTo(User $user): bool
