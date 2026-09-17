@@ -10,6 +10,10 @@
     <p class="text-muted">歡迎回來，繼續你的門訓歷程。</p>
     <hr>
 
+    @if (session('status'))
+      <div class="alert alert-success">{{ session('status') }}</div>
+    @endif
+
     @if ($errors->any())
       <div class="alert alert-danger">
         <ul class="mb-0">
@@ -29,7 +33,10 @@
       </div>
 
       <div class="mb-3">
-        <label for="password" class="form-label">密碼</label>
+        <div class="d-flex justify-content-between">
+          <label for="password" class="form-label">密碼</label>
+          <a href="{{ route('password.request') }}" class="text-muted small">忘記密碼？</a>
+        </div>
         <input type="password" class="form-control" id="password" name="password" placeholder="請輸入密碼" required>
       </div>
 

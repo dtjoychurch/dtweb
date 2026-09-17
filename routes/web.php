@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\DiscipleshipCommentController;
 use App\Http\Controllers\DiscipleshipController;
 use App\Http\Controllers\DiscipleshipGoalController;
@@ -24,10 +25,15 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 
+    Route::get('/forgot-password', [PasswordResetController::class, 'showForgotForm'])->name('password.request');
+    Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
+
     // 每個 IP 每分鐘最多 6 次，防止暴力破解密碼 / 機器人大量灌帳號。
     Route::middleware('throttle:6,1')->group(function () {
         Route::post('/login', [AuthController::class, 'login']);
         Route::post('/register', [AuthController::class, 'register']);
+        Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
+        Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.update');
     });
 });
 
