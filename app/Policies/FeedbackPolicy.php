@@ -24,6 +24,6 @@ class FeedbackPolicy
 
     public function delete(User $user, Feedback $feedback): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $feedback->user_id === $user->id;
     }
 }

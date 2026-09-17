@@ -74,6 +74,7 @@ Route::middleware('auth')->group(function () {
     // 意見信箱
     Route::get('/feedback', [FeedbackController::class, 'index'])->name('feedback.index');
     Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+    Route::delete('/feedback/{feedback}', [FeedbackController::class, 'destroy'])->name('feedback.destroy');
 
     // 生命歷程（總覽）
     Route::get('/journey', [JourneyController::class, 'index'])->name('journey.index');

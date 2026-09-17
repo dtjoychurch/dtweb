@@ -57,4 +57,27 @@ class FeedbackTest extends TestCase
         $response->assertSee('我自己的意見');
         $response->assertDontSee('別人的意見');
     }
+
+    public function test_user_can_delete_their_own_feedback(): void
+    {
+        $user = User::factory()->create();
+        $feedback = Feedback::factory()->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user)->delete(route('feedback.destroy', $feedback));
+
+        $response->assertRedirect(route('feedback.index'));
+        $this->assertDatabaseMissing('feedbacks', ['id' => $feedback->id]);
+    }
+
+    public function test_user_cannot_delete_someone_elses_feedback(): void
+    {
+        $user = User::factory()->create();
+        $other = User::factory()->create();
+        $feedback = Feedback::factory()->create(['user_id' => $other->id]);
+
+        $response = $this->actingAs($user)->delete(route('feedback.destroy', $feedback));
+
+        $response->assertForbidden();
+        $this->assertDatabaseHas('feedbacks', ['id' => $feedback->id]);
+    }
 }

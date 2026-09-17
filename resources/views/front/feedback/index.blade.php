@@ -47,9 +47,18 @@
     <div class="list-group">
       @foreach ($feedbacks as $feedback)
         <div class="list-group-item">
-          <div class="text-muted small mb-1">{{ $feedback->created_at->format('Y/m/d H:i') }}</div>
-          <h6 class="mb-1">{{ $feedback->title }}</h6>
-          <p class="mb-0">{{ $feedback->content }}</p>
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <div class="text-muted small mb-1">{{ $feedback->created_at->format('Y/m/d H:i') }}</div>
+              <h6 class="mb-1">{{ $feedback->title }}</h6>
+              <p class="mb-0">{{ $feedback->content }}</p>
+            </div>
+            <form method="POST" action="{{ route('feedback.destroy', $feedback) }}" class="ms-3" onsubmit="return confirm('確定要刪除這則意見嗎？');">
+              @csrf
+              @method('DELETE')
+              <button type="submit" class="btn btn-sm btn-link text-danger p-0">刪除</button>
+            </form>
+          </div>
         </div>
       @endforeach
     </div>
