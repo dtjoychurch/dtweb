@@ -58,6 +58,7 @@
         <a class="nav-link {{ request()->routeIs('admin.relationships.*') ? 'active' : '' }}" href="{{ route('admin.relationships.index') }}">門訓關係</a>
         <a class="nav-link {{ request()->routeIs('admin.sessions.*') ? 'active' : '' }}" href="{{ route('admin.sessions.index') }}">門訓紀錄</a>
         <a class="nav-link {{ request()->routeIs('admin.comments.*') ? 'active' : '' }}" href="{{ route('admin.comments.index') }}">留言</a>
+        <a class="nav-link {{ request()->routeIs('admin.feedbacks.*') ? 'active' : '' }}" href="{{ route('admin.feedbacks.index') }}">意見信箱</a>
         <a class="nav-link {{ request()->routeIs('admin.notes.*') ? 'active' : '' }}" href="{{ route('admin.notes.index') }}">筆記</a>
         <a class="nav-link {{ request()->routeIs('admin.records.*') ? 'active' : '' }}" href="{{ route('admin.records.index') }}">生命歷程</a>
         <a class="nav-link {{ request()->routeIs('admin.goals.*') ? 'active' : '' }}" href="{{ route('admin.goals.index') }}">門訓目標</a>

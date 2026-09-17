@@ -9,6 +9,7 @@ use App\Http\Controllers\DiscipleshipNoteController;
 use App\Http\Controllers\DiscipleshipRecordController;
 use App\Http\Controllers\DiscipleshipSessionController;
 use App\Http\Controllers\DiscipleshipSessionPhotoController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JourneyController;
 use App\Http\Controllers\PageController;
@@ -69,6 +70,10 @@ Route::middleware('auth')->group(function () {
 
     // 我的私人筆記
     Route::resource('notes', DiscipleshipNoteController::class)->except(['show']);
+
+    // 意見信箱
+    Route::get('/feedback', [FeedbackController::class, 'index'])->name('feedback.index');
+    Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
 
     // 生命歷程（總覽）
     Route::get('/journey', [JourneyController::class, 'index'])->name('journey.index');

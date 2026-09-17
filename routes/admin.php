@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FeedbackController;
 use App\Http\Controllers\Admin\GoalController;
 use App\Http\Controllers\Admin\HeroSlideController;
 use App\Http\Controllers\Admin\NoteController;
@@ -20,6 +21,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::resource('relationships', RelationshipController::class)->except(['show']);
     Route::resource('sessions', SessionController::class)->only(['index', 'edit', 'update', 'destroy']);
     Route::resource('comments', CommentController::class)->only(['index', 'destroy']);
+    Route::resource('feedbacks', FeedbackController::class)->only(['index', 'destroy']);
     Route::resource('notes', NoteController::class)->only(['index', 'destroy']);
     Route::resource('records', RecordController::class)->only(['index', 'edit', 'update', 'destroy']);
     Route::resource('record-types', RecordTypeController::class)->except(['show']);

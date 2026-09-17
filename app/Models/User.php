@@ -136,4 +136,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(DiscipleshipGoal::class, 'created_by');
     }
+
+    /**
+     * @return HasMany<Feedback, $this>
+     */
+    public function feedbacks(): HasMany
+    {
+        return $this->hasMany(Feedback::class);
+    }
 }

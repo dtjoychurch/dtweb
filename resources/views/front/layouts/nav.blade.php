@@ -13,6 +13,7 @@
         <a href="{{ route('discipleship.index') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">門訓</a>
         <a href="{{ route('journey.index') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">生命歷程</a>
         <a href="{{ route('notes.index') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">我的筆記</a>
+        <a href="{{ route('feedback.index') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">意見信箱</a>
       @endauth
       <a href="{{ route('pages.resources') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">資源</a>
       <a href="{{ route('pages.about') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">關於</a>
@@ -59,6 +60,9 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ route('notes.index') }}">我的筆記</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('feedback.index') }}">意見信箱</a>
             </li>
           @endauth
           <li class="nav-item">
