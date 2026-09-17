@@ -21,6 +21,7 @@
         <th>Email</th>
         <th>角色</th>
         <th>狀態</th>
+        <th>最後登入</th>
         <th></th>
       </tr>
     </thead>
@@ -39,6 +40,13 @@
               {{ $user->status === 'active' ? '啟用' : '停用' }}
             </span>
           </td>
+          <td class="text-muted small">
+            @if ($user->last_login_at)
+              {{ $user->last_login_at->format('Y/m/d H:i') }}
+            @else
+              從未登入
+            @endif
+          </td>
           <td class="text-end">
             <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-outline-dark">編輯</a>
             <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="d-inline" onsubmit="return confirm('確定要刪除這個使用者嗎？');">
@@ -49,7 +57,7 @@
           </td>
         </tr>
       @empty
-        <tr><td colspan="5" class="text-center text-muted py-4">沒有使用者資料</td></tr>
+        <tr><td colspan="6" class="text-center text-muted py-4">沒有使用者資料</td></tr>
       @endforelse
     </tbody>
   </table>

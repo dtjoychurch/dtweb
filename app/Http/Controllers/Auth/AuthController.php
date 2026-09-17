@@ -41,6 +41,11 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
+        Auth::user()->forceFill([
+            'last_login_at' => now(),
+            'last_login_ip' => $request->ip(),
+        ])->save();
+
         return redirect()->intended(route('discipleship.index'));
     }
 

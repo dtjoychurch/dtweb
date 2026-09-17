@@ -24,6 +24,21 @@ class AuthenticationTest extends TestCase
         $this->assertAuthenticatedAs($user);
     }
 
+    public function test_login_records_last_login_time_and_ip(): void
+    {
+        $user = User::factory()->create(['password' => Hash::make('password')]);
+        $this->assertNull($user->last_login_at);
+
+        $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $user->refresh();
+        $this->assertNotNull($user->last_login_at);
+        $this->assertNotNull($user->last_login_ip);
+    }
+
     public function test_user_cannot_login_with_wrong_password(): void
     {
         $user = User::factory()->create(['password' => Hash::make('password')]);

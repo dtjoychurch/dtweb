@@ -58,6 +58,11 @@ class AuthController extends Controller
             ]);
         }
 
+        $user->forceFill([
+            'last_login_at' => now(),
+            'last_login_ip' => $request->ip(),
+        ])->save();
+
         $token = $user->createToken('api')->plainTextToken;
 
         return response()->json([
