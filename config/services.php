@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    // Railway Volumes 不能跨 service 共用，所以備份指令沒辦法放在另一個 Cron service
+    // 裡執行（它會看到一個空的 uploads 資料夾）。改成在主服務上開一支用密鑰保護的
+    // 端點，由站外的排程服務（例如 GitHub Actions）定期打進來觸發。
+    'backup' => [
+        'token' => env('BACKUP_CRON_SECRET'),
+    ],
+
 ];

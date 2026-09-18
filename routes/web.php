@@ -11,6 +11,7 @@ use App\Http\Controllers\DiscipleshipSessionController;
 use App\Http\Controllers\DiscipleshipSessionPhotoController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Internal\BackupUploadsController;
 use App\Http\Controllers\JourneyController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\TestimonyController;
@@ -21,6 +22,11 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [PageController::class, 'about'])->name('pages.about');
 Route::get('/resources', [PageController::class, 'resources'])->name('pages.resources');
 Route::get('/testimonies/{testimony}', [TestimonyController::class, 'show'])->name('testimonies.show');
+
+// 給站外排程服務（例如 GitHub Actions）用密鑰觸發每日備份，見 config/services.php 的說明。
+Route::post('/internal/backup-uploads', [BackupUploadsController::class, 'store'])
+    ->middleware('throttle:6,1')
+    ->name('internal.backup-uploads');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
