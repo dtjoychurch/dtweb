@@ -43,6 +43,20 @@ class PasswordResetTest extends TestCase
         Notification::assertNothingSent();
     }
 
+    public function test_mail_delivery_failure_does_not_crash_the_page(): void
+    {
+        $user = User::factory()->create();
+
+        Password::shouldReceive('sendResetLink')
+            ->once()
+            ->andThrow(new \Exception('Testing domain restriction'));
+
+        $response = $this->post(route('password.email'), ['email' => $user->email]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('status');
+    }
+
     public function test_user_can_reset_password_with_a_valid_token(): void
     {
         $user = User::factory()->create(['password' => Hash::make('old-password')]);

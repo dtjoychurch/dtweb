@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class PasswordResetController extends Controller
 {
@@ -20,7 +22,13 @@ class PasswordResetController extends Controller
         $request->validate(['email' => ['required', 'email']]);
 
         // 不管信箱存不存在都回一樣的成功訊息，避免被拿來探測哪些信箱有註冊過。
-        Password::sendResetLink($request->only('email'));
+        // 寄信本身（例如 Resend 網域限制、額度用完、網路問題）失敗時也不該讓使用者
+        // 看到原始的 500 錯誤頁，一律導回同一個乾淨的訊息並把細節寫進 log。
+        try {
+            Password::sendResetLink($request->only('email'));
+        } catch (Throwable $e) {
+            Log::error('密碼重設信寄送失敗：'.$e->getMessage());
+        }
 
         return back()->with('status', '如果這個信箱有註冊過帳號，重設密碼的連結已經寄出，請去收信。');
     }
