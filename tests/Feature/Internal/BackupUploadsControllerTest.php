@@ -43,4 +43,22 @@ class BackupUploadsControllerTest extends TestCase
         $response->assertJson(['exit_code' => 0]);
         Storage::disk('s3')->assertExists('sessions/photo1.jpg');
     }
+
+    public function test_a_broken_s3_config_returns_clean_json_instead_of_a_crash(): void
+    {
+        config([
+            'services.backup.token' => 'correct-secret',
+            // 沒有設定 bucket，會讓 Flysystem 在建立 adapter 時直接丟出 TypeError，
+            // 而不是被指令內建的 throw=>false 擋下來 —— 這裡驗證這種情況也不會讓
+            // 呼叫端收到原始的錯誤頁面。
+            'filesystems.disks.s3.bucket' => null,
+        ]);
+        Storage::fake('uploads');
+        Storage::disk('uploads')->put('sessions/photo1.jpg', 'fake-image-content');
+
+        $response = $this->postJson(route('internal.backup-uploads'), [], ['X-Backup-Token' => 'correct-secret']);
+
+        $response->assertStatus(500);
+        $response->assertJsonStructure(['exit_code', 'error']);
+    }
 }

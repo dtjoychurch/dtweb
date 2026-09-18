@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\JourneyController;
 use App\Http\Controllers\Api\NoteController;
 use App\Http\Controllers\Api\RecordController;
 use App\Http\Controllers\Api\SessionController;
+use App\Http\Controllers\Internal\BackupUploadsController;
 use Illuminate\Support\Facades\Route;
 
 // 每個 IP 每分鐘最多 6 次，防止暴力破解密碼 / 機器人大量灌帳號。
@@ -22,6 +23,13 @@ Route::middleware('throttle:6,1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
 });
+
+// 給站外排程服務（例如 GitHub Actions）用密鑰觸發每日備份，見 config/services.php 的說明。
+// 放在 api.php 而不是 web.php，是因為 web 路由預設會套用 CSRF 驗證，外部排程呼叫
+// 沒有瀏覽器 session，永遠無法通過 CSRF 檢查（會被擋成 419）；api 群組沒有這個問題。
+Route::post('/internal/backup-uploads', [BackupUploadsController::class, 'store'])
+    ->middleware('throttle:6,1')
+    ->name('internal.backup-uploads');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
