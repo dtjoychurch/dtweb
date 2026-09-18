@@ -16,7 +16,18 @@ class BackupUploadsController extends Controller
         $given = (string) $request->header('X-Backup-Token');
 
         if (! $expected || ! hash_equals($expected, $given)) {
-            abort(403);
+            // 暫時性除錯輸出：只給雜湊前綴和長度做比對，絕對不會洩漏密鑰本身，
+            // 確認問題排除後就會拿掉這段。
+            return response()->json([
+                'error' => 'invalid token',
+                'debug' => [
+                    'expected_configured' => (bool) $expected,
+                    'expected_length' => strlen((string) $expected),
+                    'expected_hash_prefix' => substr(hash('sha256', (string) $expected), 0, 8),
+                    'given_length' => strlen($given),
+                    'given_hash_prefix' => substr(hash('sha256', $given), 0, 8),
+                ],
+            ], 403);
         }
 
         // 備份指令本身對「單一檔案上傳失敗」已經有處理，但像雲端儲存設定本身
