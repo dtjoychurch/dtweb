@@ -19,6 +19,7 @@ class BackupUploads extends Command
         $files = $source->allFiles();
         $copied = 0;
         $skipped = 0;
+        $failed = 0;
 
         foreach ($files as $file) {
             if ($backup->exists($file) && $backup->size($file) === $source->size($file)) {
@@ -28,17 +29,22 @@ class BackupUploads extends Command
             }
 
             $stream = $source->readStream($file);
-            $backup->put($file, $stream);
+            $ok = $backup->put($file, $stream);
 
             if (is_resource($stream)) {
                 fclose($stream);
             }
 
-            $copied++;
+            if ($ok) {
+                $copied++;
+            } else {
+                $failed++;
+                $this->error("備份失敗：{$file}");
+            }
         }
 
-        $this->info("備份完成：新增/更新 {$copied} 個檔案，略過 {$skipped} 個已是最新的檔案。");
+        $this->info("備份完成：新增/更新 {$copied} 個檔案，略過 {$skipped} 個已是最新的檔案，失敗 {$failed} 個。");
 
-        return self::SUCCESS;
+        return $failed > 0 ? self::FAILURE : self::SUCCESS;
     }
 }

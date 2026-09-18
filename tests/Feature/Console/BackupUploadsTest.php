@@ -48,4 +48,19 @@ class BackupUploadsTest extends TestCase
 
         $this->assertSame('a much longer replacement content', Storage::disk('s3')->get('sessions/photo1.jpg'));
     }
+
+    public function test_it_fails_loudly_instead_of_silently_when_the_backup_disk_rejects_a_file(): void
+    {
+        Storage::fake('uploads');
+        Storage::disk('uploads')->put('sessions/photo1.jpg', 'fake-image-content');
+
+        $failingDisk = \Mockery::mock(\Illuminate\Contracts\Filesystem\Filesystem::class);
+        $failingDisk->shouldReceive('exists')->andReturn(false);
+        $failingDisk->shouldReceive('put')->andReturn(false);
+        Storage::set('s3', $failingDisk);
+
+        $this->artisan('app:backup-uploads')
+            ->expectsOutputToContain('備份失敗')
+            ->assertExitCode(1);
+    }
 }

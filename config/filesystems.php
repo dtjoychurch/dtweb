@@ -60,15 +60,16 @@ return [
         ],
 
         // 拿來備份 uploads 用（見 App\Console\Commands\BackupUploads）。
-        // 也相容 Cloudflare R2：AWS_DEFAULT_REGION 設 "auto"，AWS_ENDPOINT 填 R2 endpoint。
+        // 相容兩種命名：標準 AWS_ENDPOINT/AWS_BUCKET（例如 Cloudflare R2 手動設定），
+        // 或 Railway「Add to Service」自動注入的 AWS_ENDPOINT_URL/AWS_S3_BUCKET_NAME。
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
             'region' => env('AWS_DEFAULT_REGION', 'auto'),
-            'bucket' => env('AWS_BUCKET'),
+            'bucket' => env('AWS_BUCKET', env('AWS_S3_BUCKET_NAME')),
             'url' => env('AWS_URL'),
-            'endpoint' => env('AWS_ENDPOINT'),
+            'endpoint' => env('AWS_ENDPOINT', env('AWS_ENDPOINT_URL')),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', true),
             'throw' => false,
             'report' => false,
