@@ -1,4 +1,4 @@
-name: Daily uploads backup
+name: Daily backup (uploads + database)
 
 on:
   schedule:
@@ -9,10 +9,23 @@ jobs:
   trigger-backup:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger backup endpoint
+      - name: Trigger uploads backup
         run: |
           http_status=$(curl -s -o response.json -w "%{http_code}" -X POST \
             "${{ vars.RAILWAY_APP_URL }}/api/internal/backup-uploads" \
+            -H "X-Backup-Token: ${{ secrets.BACKUP_CRON_SECRET }}")
+          echo "HTTP status: $http_status"
+          echo "Response body:"
+          cat response.json
+          echo
+          if [ "$http_status" -lt 200 ] || [ "$http_status" -ge 300 ]; then
+            exit 1
+          fi
+
+      - name: Trigger database backup
+        run: |
+          http_status=$(curl -s -o response.json -w "%{http_code}" -X POST \
+            "${{ vars.RAILWAY_APP_URL }}/api/internal/backup-database" \
             -H "X-Backup-Token: ${{ secrets.BACKUP_CRON_SECRET }}")
           echo "HTTP status: $http_status"
           echo "Response body:"

@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\JourneyController;
 use App\Http\Controllers\Api\NoteController;
 use App\Http\Controllers\Api\RecordController;
 use App\Http\Controllers\Api\SessionController;
+use App\Http\Controllers\Internal\BackupDatabaseController;
 use App\Http\Controllers\Internal\BackupUploadsController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +31,10 @@ Route::middleware('throttle:6,1')->group(function () {
 Route::post('/internal/backup-uploads', [BackupUploadsController::class, 'store'])
     ->middleware('throttle:6,1')
     ->name('internal.backup-uploads');
+
+Route::post('/internal/backup-database', [BackupDatabaseController::class, 'store'])
+    ->middleware('throttle:6,1')
+    ->name('internal.backup-database');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
