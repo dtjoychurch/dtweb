@@ -11,5 +11,13 @@ jobs:
     steps:
       - name: Trigger backup endpoint
         run: |
-          curl -sf -X POST "${{ vars.RAILWAY_APP_URL }}/internal/backup-uploads" \
-            -H "X-Backup-Token: ${{ secrets.BACKUP_CRON_SECRET }}"
+          http_status=$(curl -s -o response.json -w "%{http_code}" -X POST \
+            "${{ vars.RAILWAY_APP_URL }}/internal/backup-uploads" \
+            -H "X-Backup-Token: ${{ secrets.BACKUP_CRON_SECRET }}")
+          echo "HTTP status: $http_status"
+          echo "Response body:"
+          cat response.json
+          echo
+          if [ "$http_status" -lt 200 ] || [ "$http_status" -ge 300 ]; then
+            exit 1
+          fi
