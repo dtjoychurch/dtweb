@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DatabaseBackupController;
 use App\Http\Controllers\Admin\FeedbackController;
 use App\Http\Controllers\Admin\GoalController;
 use App\Http\Controllers\Admin\HeroSlideController;
@@ -30,4 +31,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // 內容管理：首頁 Hero、見證分享
     Route::resource('hero-slides', HeroSlideController::class)->except(['show']);
     Route::resource('testimonies', TestimonyController::class)->except(['show']);
+
+    // 資料庫備份還原
+    Route::get('database-backups', [DatabaseBackupController::class, 'index'])->name('database-backups.index');
+    Route::post('database-backups/{filename}/restore', [DatabaseBackupController::class, 'restore'])->name('database-backups.restore');
 });

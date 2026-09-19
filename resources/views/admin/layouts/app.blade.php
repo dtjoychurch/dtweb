@@ -67,6 +67,9 @@
         <a class="nav-link {{ request()->routeIs('admin.hero-slides.*') ? 'active' : '' }}" href="{{ route('admin.hero-slides.index') }}">首頁 Hero</a>
         <a class="nav-link {{ request()->routeIs('admin.testimonies.*') ? 'active' : '' }}" href="{{ route('admin.testimonies.index') }}">見證分享</a>
 
+        <div class="nav-section">系統</div>
+        <a class="nav-link {{ request()->routeIs('admin.database-backups.*') ? 'active' : '' }}" href="{{ route('admin.database-backups.index') }}">資料庫備份還原</a>
+
         <div class="nav-section">&nbsp;</div>
         <a class="nav-link" href="{{ route('home') }}"><i class="bi bi-box-arrow-left me-1"></i> 回到前台</a>
         <form method="POST" action="{{ route('logout') }}">

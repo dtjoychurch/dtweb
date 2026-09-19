@@ -66,7 +66,11 @@ class BackupDatabase extends Command
 
         $dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
 
-        $dump = new Mysqldump($dsn, $config['username'] ?? '', $config['password'] ?? '');
+        // add-drop-table 預設是 false——沒開的話，還原到一個已經有這些資料表的
+        // 資料庫（也就是每次還原時的正常狀況）會整個失敗在第一個 CREATE TABLE。
+        $dump = new Mysqldump($dsn, $config['username'] ?? '', $config['password'] ?? '', [
+            'add-drop-table' => true,
+        ]);
         $dump->start($tmpFile);
     }
 
