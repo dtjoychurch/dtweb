@@ -73,6 +73,22 @@ class PasswordResetTest extends TestCase
         $this->assertTrue(Hash::check('new-password', $user->fresh()->password));
     }
 
+    public function test_user_cannot_reset_password_to_the_same_password(): void
+    {
+        $user = User::factory()->create(['password' => Hash::make('same-password')]);
+        $token = Password::createToken($user);
+
+        $response = $this->post(route('password.update'), [
+            'token' => $token,
+            'email' => $user->email,
+            'password' => 'same-password',
+            'password_confirmation' => 'same-password',
+        ]);
+
+        $response->assertSessionHasErrors('password');
+        $this->assertTrue(Hash::check('same-password', $user->fresh()->password));
+    }
+
     public function test_user_cannot_reset_password_with_an_invalid_token(): void
     {
         $user = User::factory()->create(['password' => Hash::make('old-password')]);

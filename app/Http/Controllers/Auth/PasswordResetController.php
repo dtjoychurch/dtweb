@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
@@ -49,10 +51,18 @@ class PasswordResetController extends Controller
             'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
         ]);
 
+        $user = User::where('email', $request->input('email'))->first();
+
+        if ($user && Hash::check($request->input('password'), $user->password)) {
+            throw ValidationException::withMessages([
+                'password' => ['新密碼不能跟原本的密碼一樣，請換一組。'],
+            ]);
+        }
+
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
-                $user->forceFill(['password' => \Illuminate\Support\Facades\Hash::make($password)])->save();
+                $user->forceFill(['password' => Hash::make($password)])->save();
             }
         );
 
