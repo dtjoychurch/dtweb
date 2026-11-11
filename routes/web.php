@@ -14,6 +14,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JourneyController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\RelationshipInviteController;
 use App\Http\Controllers\TestimonyController;
 use Illuminate\Support\Facades\Route;
 
@@ -45,6 +46,12 @@ Route::middleware('auth')->group(function () {
     // 門訓
     Route::get('/discipleship', [DiscipleshipController::class, 'index'])->name('discipleship.index');
     Route::get('/discipleship/{relationship}', [DiscipleshipController::class, 'show'])->name('discipleship.show');
+
+    // 會員自己申請門訓關係（邀請碼）
+    Route::get('/discipleship-invites', [RelationshipInviteController::class, 'index'])->name('discipleship.invites.index');
+    Route::post('/discipleship-invites', [RelationshipInviteController::class, 'store'])->name('discipleship.invites.store');
+    Route::post('/discipleship-invites/redeem', [RelationshipInviteController::class, 'redeem'])->name('discipleship.invites.redeem');
+    Route::delete('/discipleship-invites/{invite}', [RelationshipInviteController::class, 'destroy'])->name('discipleship.invites.destroy');
 
     // 單次門訓
     Route::post('/discipleship/{relationship}/sessions', [DiscipleshipSessionController::class, 'store'])->name('discipleship.sessions.store');

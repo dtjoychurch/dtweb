@@ -21,6 +21,7 @@
         <th>Disciple</th>
         <th>開始日期</th>
         <th>狀態</th>
+        <th>審核</th>
         <th>門訓次數</th>
         <th></th>
       </tr>
@@ -36,8 +37,27 @@
               {{ ['active' => '進行中', 'paused' => '暫停中', 'completed' => '已完成'][$relationship->status] }}
             </span>
           </td>
+          <td>
+            @if ($relationship->approval_status === 'pending')
+              <span class="badge bg-warning text-dark">待審核</span>
+            @elseif ($relationship->approval_status === 'rejected')
+              <span class="badge bg-danger">已拒絕</span>
+            @else
+              <span class="badge bg-light text-dark border">已核准</span>
+            @endif
+          </td>
           <td>{{ $relationship->sessions_count }}</td>
           <td class="text-end">
+            @if ($relationship->approval_status === 'pending')
+              <form method="POST" action="{{ route('admin.relationships.approve', $relationship) }}" class="d-inline">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-success">核准</button>
+              </form>
+              <form method="POST" action="{{ route('admin.relationships.reject', $relationship) }}" class="d-inline" onsubmit="return confirm('確定要拒絕這段門訓關係申請嗎？');">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-outline-danger">拒絕</button>
+              </form>
+            @endif
             <a href="{{ route('admin.relationships.edit', $relationship) }}" class="btn btn-sm btn-outline-dark">編輯</a>
             <form method="POST" action="{{ route('admin.relationships.destroy', $relationship) }}" class="d-inline" onsubmit="return confirm('刪除後歷史紀錄仍會保留，確定要刪除嗎？');">
               @csrf
@@ -47,7 +67,7 @@
           </td>
         </tr>
       @empty
-        <tr><td colspan="6" class="text-center text-muted py-4">沒有門訓關係資料</td></tr>
+        <tr><td colspan="7" class="text-center text-muted py-4">沒有門訓關係資料</td></tr>
       @endforelse
     </tbody>
   </table>

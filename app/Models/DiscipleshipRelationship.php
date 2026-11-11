@@ -18,6 +18,7 @@ class DiscipleshipRelationship extends Model
         'started_at',
         'ended_at',
         'status',
+        'approval_status',
     ];
 
     protected function casts(): array

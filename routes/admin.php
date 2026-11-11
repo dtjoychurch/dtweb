@@ -21,6 +21,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     Route::resource('users', UserController::class)->except(['show']);
     Route::resource('relationships', RelationshipController::class)->except(['show']);
+    Route::post('relationships/{relationship}/approve', [RelationshipController::class, 'approve'])->name('relationships.approve');
+    Route::post('relationships/{relationship}/reject', [RelationshipController::class, 'reject'])->name('relationships.reject');
     Route::resource('sessions', SessionController::class)->only(['index', 'edit', 'update', 'destroy']);
     Route::resource('comments', CommentController::class)->only(['index', 'destroy']);
     Route::resource('feedbacks', FeedbackController::class)->only(['index', 'show', 'destroy']);

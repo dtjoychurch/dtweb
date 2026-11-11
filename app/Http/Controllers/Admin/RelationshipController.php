@@ -68,4 +68,22 @@ class RelationshipController extends Controller
 
         return redirect()->route('admin.relationships.index')->with('status', '已刪除門訓關係（歷史紀錄仍保留）。');
     }
+
+    public function approve(DiscipleshipRelationship $relationship): RedirectResponse
+    {
+        $this->authorize('update', $relationship);
+
+        $relationship->update(['approval_status' => 'approved']);
+
+        return redirect()->route('admin.relationships.index')->with('status', '已核准這段門訓關係申請。');
+    }
+
+    public function reject(DiscipleshipRelationship $relationship): RedirectResponse
+    {
+        $this->authorize('update', $relationship);
+
+        $relationship->update(['approval_status' => 'rejected']);
+
+        return redirect()->route('admin.relationships.index')->with('status', '已拒絕這段門訓關係申請。');
+    }
 }

@@ -5,7 +5,10 @@
 
 @section('content')
 <div class="container page-content pb-5">
-  <h2 class="fw-bold text-muted mb-4">我的門訓</h2>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-muted mb-0">我的門訓</h2>
+    <a href="{{ route('discipleship.invites.index') }}" class="btn btn-dark btn-sm">＋ 申請門訓關係</a>
+  </div>
   <hr>
 
   @if (session('status'))
@@ -13,7 +16,7 @@
   @endif
 
   @if ($relationships->isEmpty())
-    <p class="text-muted mt-4">目前還沒有門訓關係。請聯絡管理員為您建立門訓關係。</p>
+    <p class="text-muted mt-4">目前還沒有門訓關係。可以點上面「申請門訓關係」自己發起，或請管理員為您建立。</p>
   @else
     <div class="row g-4 mt-1">
       @foreach ($relationships as $relationship)
@@ -30,9 +33,15 @@
                 （已同行 {{ (int) $relationship->started_at->diffInDays(now()) }} 天）
               </div>
 
-              <span class="badge {{ $relationship->status === 'active' ? 'bg-success' : ($relationship->status === 'paused' ? 'bg-secondary' : 'bg-dark') }} mb-3" style="width:fit-content;">
-                {{ ['active' => '進行中', 'paused' => '暫停中', 'completed' => '已完成'][$relationship->status] }}
-              </span>
+              @if ($relationship->approval_status === 'pending')
+                <span class="badge bg-warning text-dark mb-3" style="width:fit-content;">等待管理員審核</span>
+              @elseif ($relationship->approval_status === 'rejected')
+                <span class="badge bg-danger mb-3" style="width:fit-content;">申請已被拒絕</span>
+              @else
+                <span class="badge {{ $relationship->status === 'active' ? 'bg-success' : ($relationship->status === 'paused' ? 'bg-secondary' : 'bg-dark') }} mb-3" style="width:fit-content;">
+                  {{ ['active' => '進行中', 'paused' => '暫停中', 'completed' => '已完成'][$relationship->status] }}
+                </span>
+              @endif
 
               <div class="mt-auto">
                 <div class="small text-muted mb-2">
