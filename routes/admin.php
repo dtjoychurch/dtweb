@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\FeedbackController;
 use App\Http\Controllers\Admin\GoalController;
 use App\Http\Controllers\Admin\HeroSlideController;
 use App\Http\Controllers\Admin\NoteController;
+use App\Http\Controllers\Admin\NotificationSettingController;
 use App\Http\Controllers\Admin\RecordController;
 use App\Http\Controllers\Admin\RecordTypeController;
 use App\Http\Controllers\Admin\RelationshipController;
@@ -35,4 +36,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // 資料庫備份還原
     Route::get('database-backups', [DatabaseBackupController::class, 'index'])->name('database-backups.index');
     Route::post('database-backups/{filename}/restore', [DatabaseBackupController::class, 'restore'])->name('database-backups.restore');
+
+    // 通知設定
+    Route::resource('notification-settings', NotificationSettingController::class)->only(['index', 'update']);
 });

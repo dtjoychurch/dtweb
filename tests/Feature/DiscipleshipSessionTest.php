@@ -158,6 +158,127 @@ class DiscipleshipSessionTest extends TestCase
         $this->assertDatabaseHas('discipleship_sessions', ['id' => $session->id, 'deleted_at' => null]);
     }
 
+    public function test_either_relationship_member_can_edit_a_session_not_just_the_creator(): void
+    {
+        $mentor = User::factory()->create();
+        $disciple = User::factory()->create();
+        $relationship = DiscipleshipRelationship::factory()->create([
+            'mentor_id' => $mentor->id,
+            'disciple_id' => $disciple->id,
+        ]);
+        $session = DiscipleshipSession::factory()->create([
+            'relationship_id' => $relationship->id,
+            'created_by' => $mentor->id,
+            'session_date' => '2026-05-01',
+        ]);
+
+        $response = $this->actingAs($disciple)->put(route('discipleship.sessions.update', [$relationship, $session]), [
+            'session_date' => '2026-05-01',
+            'title' => 'disciple 編輯的標題',
+            'content' => 'disciple 編輯的內容',
+            'shared' => '1',
+        ]);
+
+        $response->assertRedirect(route('discipleship.sessions.show', [$relationship, $session]));
+        $this->assertDatabaseHas('discipleship_sessions', ['id' => $session->id, 'title' => 'disciple 編輯的標題']);
+    }
+
+    public function test_unrelated_user_cannot_edit_a_session(): void
+    {
+        $relationship = DiscipleshipRelationship::factory()->create();
+        $session = DiscipleshipSession::factory()->create(['relationship_id' => $relationship->id]);
+        $outsider = User::factory()->create();
+
+        $this->actingAs($outsider)
+            ->put(route('discipleship.sessions.update', [$relationship, $session]), [
+                'session_date' => $session->session_date->toDateString(),
+                'content' => '不應該成功',
+            ])
+            ->assertForbidden();
+    }
+
+    public function test_turning_off_shared_hides_the_session_from_the_counterpart(): void
+    {
+        $mentor = User::factory()->create();
+        $disciple = User::factory()->create();
+        $relationship = DiscipleshipRelationship::factory()->create([
+            'mentor_id' => $mentor->id,
+            'disciple_id' => $disciple->id,
+        ]);
+        $session = DiscipleshipSession::factory()->create([
+            'relationship_id' => $relationship->id,
+            'created_by' => $mentor->id,
+            'session_date' => '2026-05-01',
+        ]);
+
+        $this->actingAs($mentor)->put(route('discipleship.sessions.update', [$relationship, $session]), [
+            'session_date' => '2026-05-01',
+            'content' => '這次不想讓對方看到',
+            'shared' => '0',
+        ])->assertRedirect();
+
+        $this->assertSame($disciple->id, $session->fresh()->hidden_from);
+
+        // The toggler (mentor) can still see it.
+        $this->actingAs($mentor)
+            ->get(route('discipleship.sessions.show', [$relationship, $session]))
+            ->assertOk();
+
+        // The counterpart (disciple) cannot.
+        $this->actingAs($disciple)
+            ->get(route('discipleship.sessions.show', [$relationship, $session]))
+            ->assertForbidden();
+    }
+
+    public function test_a_hidden_session_is_excluded_from_the_counterparts_timeline(): void
+    {
+        $mentor = User::factory()->create();
+        $disciple = User::factory()->create();
+        $relationship = DiscipleshipRelationship::factory()->create([
+            'mentor_id' => $mentor->id,
+            'disciple_id' => $disciple->id,
+        ]);
+        DiscipleshipSession::factory()->create([
+            'relationship_id' => $relationship->id,
+            'created_by' => $mentor->id,
+            'title' => '隱藏起來的門訓',
+            'hidden_from' => $disciple->id,
+        ]);
+
+        $response = $this->actingAs($disciple)->get(route('discipleship.show', $relationship));
+
+        $response->assertOk();
+        $response->assertDontSee('隱藏起來的門訓');
+    }
+
+    public function test_turning_shared_back_on_makes_the_session_visible_again(): void
+    {
+        $mentor = User::factory()->create();
+        $disciple = User::factory()->create();
+        $relationship = DiscipleshipRelationship::factory()->create([
+            'mentor_id' => $mentor->id,
+            'disciple_id' => $disciple->id,
+        ]);
+        $session = DiscipleshipSession::factory()->create([
+            'relationship_id' => $relationship->id,
+            'created_by' => $mentor->id,
+            'session_date' => '2026-05-01',
+            'hidden_from' => $disciple->id,
+        ]);
+
+        $this->actingAs($mentor)->put(route('discipleship.sessions.update', [$relationship, $session]), [
+            'session_date' => '2026-05-01',
+            'content' => '現在想讓對方看到了',
+            'shared' => '1',
+        ])->assertRedirect();
+
+        $this->assertNull($session->fresh()->hidden_from);
+
+        $this->actingAs($disciple)
+            ->get(route('discipleship.sessions.show', [$relationship, $session]))
+            ->assertOk();
+    }
+
     public function test_admin_can_update_a_session_without_tripping_the_duplicate_day_check_on_itself(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);

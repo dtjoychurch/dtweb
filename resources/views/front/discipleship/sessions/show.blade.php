@@ -13,17 +13,27 @@
   <div class="d-flex justify-content-between align-items-center">
     <a href="{{ route('discipleship.show', $relationship) }}" class="text-muted small text-decoration-none">← 回到門訓歷程</a>
 
-    @can('delete', $session)
-      <form method="POST" action="{{ route('discipleship.sessions.destroy', [$relationship, $session]) }}" onsubmit="return confirm('確定要刪除這次門訓紀錄嗎？（刪除後仍會保留在資料庫中，可聯絡管理員還原）');">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-sm btn-link text-danger p-0">刪除這次門訓紀錄</button>
-      </form>
-    @endcan
+    <div>
+      @can('update', $session)
+        <a href="{{ route('discipleship.sessions.edit', [$relationship, $session]) }}" class="btn btn-sm btn-link p-0 me-3">編輯</a>
+      @endcan
+      @can('delete', $session)
+        <form method="POST" action="{{ route('discipleship.sessions.destroy', [$relationship, $session]) }}" onsubmit="return confirm('確定要刪除這次門訓紀錄嗎？（刪除後仍會保留在資料庫中，可聯絡管理員還原）');" class="d-inline">
+          @csrf
+          @method('DELETE')
+          <button type="submit" class="btn btn-sm btn-link text-danger p-0">刪除這次門訓紀錄</button>
+        </form>
+      @endcan
+    </div>
   </div>
 
   <h2 class="fw-bold text-muted mt-2 mb-1">第 {{ $ordinal }} 次門訓</h2>
-  <div class="text-muted mb-4">{{ $session->session_date->format('Y/m/d') }}</div>
+  <div class="text-muted mb-4">
+    {{ $session->session_date->format('Y/m/d') }}
+    @if ($session->hidden_from)
+      <span class="badge bg-secondary ms-2">對方看不到這筆紀錄</span>
+    @endif
+  </div>
 
   @if ($session->title)
     <h4 class="mb-3">{{ $session->title }}</h4>
@@ -87,14 +97,33 @@
   @forelse ($session->comments as $comment)
     <div class="mb-3 pb-3 border-bottom">
       <div class="fw-semibold">{{ $comment->user->name }}</div>
-      <div class="text-muted small mb-1">{{ $comment->created_at->format('Y/m/d H:i') }}</div>
+      <div class="text-muted small mb-1">
+        {{ $comment->created_at->format('Y/m/d H:i') }}
+        @if ($comment->created_at->ne($comment->updated_at))
+          <span class="text-muted">（已編輯）</span>
+        @endif
+      </div>
+
       <p class="mb-1" style="white-space: pre-line;">{{ $comment->content }}</p>
       @if ($comment->user_id === auth()->id())
+        <button type="button" class="btn btn-sm btn-link p-0 me-2" data-bs-toggle="collapse" data-bs-target="#comment-edit-{{ $comment->id }}">編輯</button>
         <form method="POST" action="{{ route('discipleship.sessions.comments.destroy', [$relationship, $session, $comment]) }}" onsubmit="return confirm('確定要刪除這則留言嗎？');" class="d-inline">
           @csrf
           @method('DELETE')
           <button type="submit" class="btn btn-sm btn-link text-danger p-0">刪除</button>
         </form>
+      @endif
+
+      @if ($comment->user_id === auth()->id())
+        <div class="collapse mt-2" id="comment-edit-{{ $comment->id }}">
+          <form method="POST" action="{{ route('discipleship.sessions.comments.update', [$relationship, $session, $comment]) }}">
+            @csrf
+            @method('PUT')
+            <textarea name="content" class="form-control mb-2" rows="3" required>{{ $comment->content }}</textarea>
+            <button type="submit" class="btn btn-sm btn-dark">儲存</button>
+            <button type="button" class="btn btn-sm btn-link text-muted" data-bs-toggle="collapse" data-bs-target="#comment-edit-{{ $comment->id }}">取消</button>
+          </form>
+        </div>
       @endif
     </div>
   @empty

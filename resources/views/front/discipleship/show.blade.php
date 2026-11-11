@@ -140,6 +140,11 @@
         <label class="form-label">照片（選填，可多選）</label>
         <input type="file" name="photos[]" class="form-control" accept="image/*" multiple>
       </div>
+      <div class="form-check form-switch mb-2">
+        <input type="hidden" name="shared" value="0">
+        <input type="checkbox" name="shared" value="1" class="form-check-input" id="newSessionShared" checked>
+        <label class="form-check-label" for="newSessionShared">讓對方看到這筆門訓紀錄</label>
+      </div>
       <button type="submit" class="btn btn-dark btn-sm">新增</button>
     </form>
   </div>

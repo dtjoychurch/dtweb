@@ -49,7 +49,8 @@ class DiscipleshipController extends Controller
                 $session->ordinal_number = $index + 1;
 
                 return $session;
-            });
+            })
+            ->filter(fn ($session) => $session->isVisibleTo($user));
 
         $records = $relationship->records()
             ->with(['creator', 'type'])

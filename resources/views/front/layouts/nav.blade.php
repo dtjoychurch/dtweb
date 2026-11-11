@@ -14,6 +14,12 @@
         <a href="{{ route('journey.index') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">生命歷程</a>
         <a href="{{ route('notes.index') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">我的筆記</a>
         <a href="{{ route('feedback.index') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">意見信箱</a>
+        <a href="{{ route('notifications.index') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button position-relative">
+          通知
+          @if ($unreadNotificationsCount > 0)
+            <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle" style="font-size: 0.6rem;">{{ $unreadNotificationsCount }}</span>
+          @endif
+        </a>
       @endauth
       <a href="{{ route('pages.resources') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">資源</a>
       <a href="{{ route('pages.about') }}" class="navlink mx-3 text-decoration-none fw-semibold glow-button">關於</a>
@@ -63,6 +69,14 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ route('feedback.index') }}">意見信箱</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ route('notifications.index') }}">
+                通知
+                @if ($unreadNotificationsCount > 0)
+                  <span class="badge bg-danger rounded-pill">{{ $unreadNotificationsCount }}</span>
+                @endif
+              </a>
             </li>
           @endauth
           <li class="nav-item">

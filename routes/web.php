@@ -12,6 +12,7 @@ use App\Http\Controllers\DiscipleshipSessionPhotoController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JourneyController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\TestimonyController;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +49,8 @@ Route::middleware('auth')->group(function () {
     // 單次門訓
     Route::post('/discipleship/{relationship}/sessions', [DiscipleshipSessionController::class, 'store'])->name('discipleship.sessions.store');
     Route::get('/discipleship/{relationship}/sessions/{session}', [DiscipleshipSessionController::class, 'show'])->name('discipleship.sessions.show');
+    Route::get('/discipleship/{relationship}/sessions/{session}/edit', [DiscipleshipSessionController::class, 'edit'])->name('discipleship.sessions.edit');
+    Route::put('/discipleship/{relationship}/sessions/{session}', [DiscipleshipSessionController::class, 'update'])->name('discipleship.sessions.update');
     Route::delete('/discipleship/{relationship}/sessions/{session}', [DiscipleshipSessionController::class, 'destroy'])->name('discipleship.sessions.destroy');
 
     // 門訓照片
@@ -78,6 +81,9 @@ Route::middleware('auth')->group(function () {
 
     // 生命歷程（總覽）
     Route::get('/journey', [JourneyController::class, 'index'])->name('journey.index');
+
+    // 通知
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
 });
 
 require __DIR__.'/admin.php';

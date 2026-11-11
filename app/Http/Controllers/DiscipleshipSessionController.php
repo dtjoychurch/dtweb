@@ -18,8 +18,9 @@ class DiscipleshipSessionController extends Controller
         $this->authorize('create', [DiscipleshipSession::class, $relationship]);
 
         $session = $relationship->sessions()->create([
-            ...collect($request->validated())->except('photos')->all(),
+            ...collect($request->validated())->except(['photos', 'shared'])->all(),
             'created_by' => Auth::id(),
+            'hidden_from' => $this->resolveHiddenFrom($request, $relationship),
         ]);
 
         $this->storeSessionPhotos($request->file('photos', []), $session);
@@ -43,6 +44,44 @@ class DiscipleshipSessionController extends Controller
         $ordinal = $session->ordinal();
 
         return view('front.discipleship.sessions.show', compact('relationship', 'session', 'note', 'ordinal'));
+    }
+
+    public function edit(DiscipleshipRelationship $relationship, DiscipleshipSession $session)
+    {
+        abort_unless($session->relationship_id === $relationship->id, 404);
+
+        $this->authorize('update', $session);
+
+        return view('front.discipleship.sessions.edit', compact('relationship', 'session'));
+    }
+
+    public function update(StoreDiscipleshipSessionRequest $request, DiscipleshipRelationship $relationship, DiscipleshipSession $session): RedirectResponse
+    {
+        abort_unless($session->relationship_id === $relationship->id, 404);
+
+        $this->authorize('update', $session);
+
+        $session->update([
+            ...collect($request->validated())->except(['photos', 'shared'])->all(),
+            'hidden_from' => $this->resolveHiddenFrom($request, $relationship),
+        ]);
+
+        return redirect()
+            ->route('discipleship.sessions.show', [$relationship, $session])
+            ->with('status', '已更新這次門訓紀錄。');
+    }
+
+    /**
+     * 「讓對方看到」勾選時沒有隱藏對象；取消勾選時，隱藏對象是相對於目前這個
+     * 編輯者的另一邊（不是固定寫死 disciple 或 mentor）。
+     */
+    private function resolveHiddenFrom(StoreDiscipleshipSessionRequest $request, DiscipleshipRelationship $relationship): ?int
+    {
+        if ($request->boolean('shared', true)) {
+            return null;
+        }
+
+        return $relationship->counterpartFor(Auth::user())?->id;
     }
 
     public function destroy(DiscipleshipRelationship $relationship, DiscipleshipSession $session): RedirectResponse

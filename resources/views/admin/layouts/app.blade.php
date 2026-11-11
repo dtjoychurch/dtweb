@@ -69,6 +69,7 @@
 
         <div class="nav-section">系統</div>
         <a class="nav-link {{ request()->routeIs('admin.database-backups.*') ? 'active' : '' }}" href="{{ route('admin.database-backups.index') }}">資料庫備份還原</a>
+        <a class="nav-link {{ request()->routeIs('admin.notification-settings.*') ? 'active' : '' }}" href="{{ route('admin.notification-settings.index') }}">通知設定</a>
 
         <div class="nav-section">&nbsp;</div>
         <a class="nav-link" href="{{ route('home') }}"><i class="bi bi-box-arrow-left me-1"></i> 回到前台</a>

@@ -78,6 +78,28 @@ class DiscipleshipCommentTest extends TestCase
         )->assertForbidden();
     }
 
+    public function test_edited_marker_only_shows_after_an_actual_edit(): void
+    {
+        [$mentor, $disciple, $relationship, $session] = $this->makeSession();
+        $comment = DiscipleshipComment::factory()->create([
+            'session_id' => $session->id,
+            'user_id' => $disciple->id,
+            'content' => '原本的留言',
+        ]);
+
+        $before = $this->actingAs($disciple)->get(route('discipleship.sessions.show', [$relationship, $session]));
+        $before->assertDontSee('已編輯');
+
+        $this->travel(1)->minutes();
+        $this->actingAs($disciple)->put(
+            route('discipleship.sessions.comments.update', [$relationship, $session, $comment]),
+            ['content' => '編輯後的留言']
+        );
+
+        $after = $this->actingAs($disciple)->get(route('discipleship.sessions.show', [$relationship, $session]));
+        $after->assertSee('已編輯');
+    }
+
     public function test_user_cannot_delete_others_comment(): void
     {
         [$mentor, $disciple, $relationship, $session] = $this->makeSession();

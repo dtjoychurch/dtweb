@@ -22,6 +22,7 @@ class StoreDiscipleshipSessionRequest extends FormRequest
             'session_date' => ['required', 'date'],
             'title' => ['nullable', 'string', 'max:255'],
             'content' => ['required', 'string'],
+            'shared' => ['sometimes', 'boolean'],
             'photos' => ['nullable', 'array', 'max:10'],
             'photos.*' => ['image', 'max:4096'],
         ];

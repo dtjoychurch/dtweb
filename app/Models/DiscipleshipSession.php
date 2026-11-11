@@ -18,6 +18,7 @@ class DiscipleshipSession extends Model
         'session_date',
         'title',
         'content',
+        'hidden_from',
     ];
 
     protected function casts(): array
@@ -65,6 +66,11 @@ class DiscipleshipSession extends Model
     public function photos(): HasMany
     {
         return $this->hasMany(DiscipleshipSessionPhoto::class, 'session_id');
+    }
+
+    public function isVisibleTo(User $user): bool
+    {
+        return $this->relationship->isParticipant($user) && $this->hidden_from !== $user->id;
     }
 
     /**
