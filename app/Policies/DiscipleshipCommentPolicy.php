@@ -20,7 +20,7 @@ class DiscipleshipCommentPolicy
 
     public function create(User $user, DiscipleshipSession $session): bool
     {
-        return $user->isAdmin() || $session->relationship->isParticipant($user);
+        return $user->isAdmin() || $session->isVisibleTo($user);
     }
 
     public function update(User $user, DiscipleshipComment $comment): bool

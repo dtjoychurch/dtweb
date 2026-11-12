@@ -45,6 +45,17 @@ class DiscipleshipCommentTest extends TestCase
         ]);
     }
 
+    public function test_the_person_a_session_is_hidden_from_cannot_comment_on_it(): void
+    {
+        [$mentor, $disciple, $relationship, $session] = $this->makeSession();
+        $session->update(['hidden_from' => $disciple->id]);
+
+        $this->actingAs($disciple)->post(
+            route('discipleship.sessions.comments.store', [$relationship, $session]),
+            ['content' => '不應該成功']
+        )->assertForbidden();
+    }
+
     public function test_user_can_update_own_comment(): void
     {
         [$mentor, $disciple, $relationship, $session] = $this->makeSession();

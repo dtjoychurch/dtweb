@@ -24,5 +24,8 @@
 
   <!-- 引入 自訂的CSS -->
   <link rel="stylesheet" href="/assets/css/layout.css">
+
+  <!-- 防止表單重複送出 -->
+  <script src="/assets/js/submit-guard.js"></script>
 </head>
 

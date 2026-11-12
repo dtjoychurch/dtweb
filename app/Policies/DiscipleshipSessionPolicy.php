@@ -24,7 +24,7 @@ class DiscipleshipSessionPolicy
 
     public function update(User $user, DiscipleshipSession $session): bool
     {
-        return $user->isAdmin() || $session->relationship->isParticipant($user);
+        return $user->isAdmin() || $session->isVisibleTo($user);
     }
 
     public function delete(User $user, DiscipleshipSession $session): bool

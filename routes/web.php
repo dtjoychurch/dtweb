@@ -49,9 +49,13 @@ Route::middleware('auth')->group(function () {
 
     // 會員自己申請門訓關係（邀請碼）
     Route::get('/discipleship-invites', [RelationshipInviteController::class, 'index'])->name('discipleship.invites.index');
-    Route::post('/discipleship-invites', [RelationshipInviteController::class, 'store'])->name('discipleship.invites.store');
-    Route::post('/discipleship-invites/redeem', [RelationshipInviteController::class, 'redeem'])->name('discipleship.invites.redeem');
     Route::delete('/discipleship-invites/{invite}', [RelationshipInviteController::class, 'destroy'])->name('discipleship.invites.destroy');
+
+    // 每個帳號每分鐘最多 10 次，防止被用來連續猜邀請碼或濫發。
+    Route::middleware('throttle:10,1')->group(function () {
+        Route::post('/discipleship-invites', [RelationshipInviteController::class, 'store'])->name('discipleship.invites.store');
+        Route::post('/discipleship-invites/redeem', [RelationshipInviteController::class, 'redeem'])->name('discipleship.invites.redeem');
+    });
 
     // 單次門訓
     Route::post('/discipleship/{relationship}/sessions', [DiscipleshipSessionController::class, 'store'])->name('discipleship.sessions.store');

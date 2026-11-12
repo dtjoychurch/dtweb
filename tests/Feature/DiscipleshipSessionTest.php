@@ -74,7 +74,7 @@ class DiscipleshipSessionTest extends TestCase
         ])->assertForbidden();
     }
 
-    public function test_cannot_create_two_sessions_on_the_same_day_for_the_same_relationship(): void
+    public function test_multiple_sessions_on_the_same_day_are_allowed_for_the_same_relationship(): void
     {
         $mentor = User::factory()->create();
         $disciple = User::factory()->create();
@@ -89,11 +89,11 @@ class DiscipleshipSessionTest extends TestCase
 
         $response = $this->actingAs($mentor)->post(route('discipleship.sessions.store', $relationship), [
             'session_date' => '2026-05-01',
-            'content' => '同一天不應該可以再新增一筆。',
+            'content' => '同一天應該可以再新增一筆。',
         ]);
 
-        $response->assertSessionHasErrors('session_date');
-        $this->assertSame(1, $relationship->sessions()->whereDate('session_date', '2026-05-01')->count());
+        $response->assertRedirect();
+        $this->assertSame(2, $relationship->sessions()->whereDate('session_date', '2026-05-01')->count());
     }
 
     public function test_same_day_is_still_allowed_across_different_relationships(): void
@@ -197,6 +197,32 @@ class DiscipleshipSessionTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_the_person_a_session_is_hidden_from_cannot_edit_it(): void
+    {
+        $mentor = User::factory()->create();
+        $disciple = User::factory()->create();
+        $relationship = DiscipleshipRelationship::factory()->create([
+            'mentor_id' => $mentor->id,
+            'disciple_id' => $disciple->id,
+        ]);
+        $session = DiscipleshipSession::factory()->create([
+            'relationship_id' => $relationship->id,
+            'created_by' => $mentor->id,
+            'hidden_from' => $disciple->id,
+        ]);
+
+        $this->actingAs($disciple)
+            ->get(route('discipleship.sessions.edit', [$relationship, $session]))
+            ->assertForbidden();
+
+        $this->actingAs($disciple)
+            ->put(route('discipleship.sessions.update', [$relationship, $session]), [
+                'session_date' => $session->session_date->toDateString(),
+                'content' => '不應該成功',
+            ])
+            ->assertForbidden();
+    }
+
     public function test_turning_off_shared_hides_the_session_from_the_counterpart(): void
     {
         $mentor = User::factory()->create();
@@ -279,7 +305,7 @@ class DiscipleshipSessionTest extends TestCase
             ->assertOk();
     }
 
-    public function test_admin_can_update_a_session_without_tripping_the_duplicate_day_check_on_itself(): void
+    public function test_admin_can_update_a_session(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $relationship = DiscipleshipRelationship::factory()->create();
@@ -298,7 +324,7 @@ class DiscipleshipSessionTest extends TestCase
         $this->assertDatabaseHas('discipleship_sessions', ['id' => $session->id, 'title' => '更新標題']);
     }
 
-    public function test_admin_cannot_update_a_session_onto_a_day_another_session_already_uses(): void
+    public function test_admin_can_update_a_session_onto_a_day_another_session_already_uses(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $relationship = DiscipleshipRelationship::factory()->create();
@@ -313,11 +339,11 @@ class DiscipleshipSessionTest extends TestCase
 
         $response = $this->actingAs($admin)->put(route('admin.sessions.update', $session), [
             'session_date' => '2026-05-01',
-            'title' => '不應該成功',
+            'title' => '應該成功',
             'content' => '內容',
         ]);
 
-        $response->assertSessionHasErrors('session_date');
-        $this->assertSame('2026-05-08', $session->fresh()->session_date->toDateString());
+        $response->assertRedirect(route('admin.sessions.index'));
+        $this->assertSame('2026-05-01', $session->fresh()->session_date->toDateString());
     }
 }

@@ -11,7 +11,7 @@ class NotificationController extends Controller
     {
         $notifications = AppNotification::where('user_id', Auth::id())
             ->latest()
-            ->paginate(15);
+            ->paginate(20);
 
         AppNotification::where('user_id', Auth::id())
             ->unread()

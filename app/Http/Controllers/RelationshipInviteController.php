@@ -76,6 +76,17 @@ class RelationshipInviteController extends Controller
             ]);
         }
 
+        // 用「條件式更新」把兌換這個動作變成原子操作——如果兩個請求同時兌換同一個碼，
+        // 只有第一個能把 status 從 pending 改成 redeemed，第二個會發現改不到 0 筆而被擋下來，
+        // 避免同一個邀請碼被搶著兌換兩次、建出兩段門訓關係。
+        $claimed = RelationshipInvite::where('id', $invite->id)
+            ->where('status', 'pending')
+            ->update(['status' => 'redeemed', 'redeemed_by' => $user->id, 'redeemed_at' => now()]);
+
+        if ($claimed === 0) {
+            return back()->withErrors(['code' => '這個邀請碼不存在，或已經被使用過了。']);
+        }
+
         $mentorId = $invite->role === 'mentor' ? $invite->created_by : $user->id;
         $discipleId = $invite->role === 'mentor' ? $user->id : $invite->created_by;
 
@@ -87,12 +98,7 @@ class RelationshipInviteController extends Controller
             'approval_status' => 'pending',
         ]);
 
-        $invite->update([
-            'status' => 'redeemed',
-            'redeemed_by' => $user->id,
-            'redeemed_at' => now(),
-            'relationship_id' => $relationship->id,
-        ]);
+        $invite->update(['relationship_id' => $relationship->id]);
 
         return redirect()->route('discipleship.invites.index')->with('status', '已送出門訓關係申請，等待管理員審核。');
     }
